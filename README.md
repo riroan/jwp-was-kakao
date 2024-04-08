@@ -7,3 +7,19 @@
 
 ## 온라인 코드 리뷰 과정
 * [텍스트와 이미지로 살펴보는 온라인 코드 리뷰 과정](https://github.com/next-step/nextstep-docs/tree/master/codereview)
+
+## 요구사항
+1. GET /index.html 응답하기
+- [ ] templates의 `/index.html` 파일 응답
+
+2. CSS 지원하기
+- [ ] static의 `css` 파일 응답
+
+3. Query String 파싱
+- [ ] Query String 파싱하여 유저 객체 생성 및 Database에 저장
+
+4. POST 방식으로 회원가입
+- [ ] POST form 요청 바디 파싱하여 유저 객체 생성 및 Database에 저장
+
+5. Redirect
+- [ ] 회원가입 완료 후 `index.html`로 Redirect
