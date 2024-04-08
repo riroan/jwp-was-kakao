@@ -1,13 +1,14 @@
 package webserver;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.Socket;
+import java.net.URISyntaxException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import utils.FileIoUtils;
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
@@ -24,12 +25,49 @@ public class RequestHandler implements Runnable {
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
+
+            InputStreamReader reader = new InputStreamReader(in);
+            BufferedReader bufferedReader = new BufferedReader(reader);
+            Map<String, String> header = new HashMap<>();
+            String line = bufferedReader.readLine();
+            String[] tokens = line.split(" ");
+            String url = tokens[1];
             DataOutputStream dos = new DataOutputStream(out);
-            byte[] body = "Hello World".getBytes();
-            response200Header(dos, body.length);
-            responseBody(dos, body);
+
+            while (true) {
+                line = bufferedReader.readLine();
+                if (line == null || line.isEmpty()) {
+                    break;
+                }
+                tokens = line.split(": ");
+                header.put(tokens[0], tokens[1]);
+            }
+
+            if (url.equals("/index.html")) {
+                handleIndex(dos);
+                return;
+            }
+
+            handleRoot(dos);
+
         } catch (IOException e) {
             logger.error(e.getMessage());
+        }
+    }
+
+    private void handleRoot(DataOutputStream dos) {
+        byte[] body = "Hello World".getBytes();
+        response200Header(dos, body.length);
+        responseBody(dos, body);
+    }
+
+    private void handleIndex(DataOutputStream dos) {
+        try {
+            byte[] body = FileIoUtils.loadFileFromClasspath("./templates/index.html");
+            response200Header(dos, body.length);
+            responseBody(dos, body);
+        } catch (IOException | URISyntaxException e) {
+            throw new RuntimeException(e);
         }
     }
 
