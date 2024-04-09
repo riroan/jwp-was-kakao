@@ -1,9 +1,7 @@
 package webserver;
 
-import model.HttpHeaders;
-import model.HttpRequest;
-import model.HttpResponse;
-import model.StartLine;
+import db.DataBase;
+import model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -14,6 +12,7 @@ import utils.IOUtils;
 import java.io.*;
 import java.net.Socket;
 import java.net.URISyntaxException;
+import java.net.URLDecoder;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -45,8 +44,12 @@ public class RequestHandler implements Runnable {
                 return;
             }
 
-            // 3. etc
+            if (path.startsWith("/user/create")) {
+                handleUserCreate(httpRequest, dos);
+                return;
+            }
 
+            // 3. etc
             handleRoot(dos);
 
         } catch (IOException e) {
@@ -54,8 +57,23 @@ public class RequestHandler implements Runnable {
         }
     }
 
+    private void handleUserCreate(HttpRequest httpRequest, DataOutputStream dos) throws IOException {
+        HttpQueryParams queryParams = httpRequest.getQueryParams();
+        String userId = queryParams.get("userId");
+        String password = queryParams.get("password");
+        String name = queryParams.get("name");
+        String email = queryParams.get("email");
+        User user = new User(userId, password, name, email);
+        DataBase.addUser(user);
+
+        HttpResponse response = new HttpResponse();
+
+        response.respond(dos);
+    }
+
     private boolean isFile(String path) {
-        String mime = java.net.URLConnection.guessContentTypeFromName(path);
+        String[] paths = path.split("\\?");
+        String mime = java.net.URLConnection.guessContentTypeFromName(paths[0]);
         return mime != null;
     }
 
@@ -72,9 +90,10 @@ public class RequestHandler implements Runnable {
     private HttpRequest parseRequest(BufferedReader br) throws IOException {
         StartLine startLine = StartLine.of(br.readLine());
         HttpHeaders headers = HttpHeaders.of(parseHeaderString(br));
+        HttpQueryParams queryParams = HttpQueryParams.of(startLine.getPath());
         String body = parseBody(br, headers);
 
-        return new HttpRequest(startLine, headers, body);
+        return new HttpRequest(startLine, headers, queryParams, body);
     }
 
     private String parseHeaderString(BufferedReader br) throws IOException {

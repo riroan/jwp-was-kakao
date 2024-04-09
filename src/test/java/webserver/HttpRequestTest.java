@@ -5,10 +5,12 @@ import model.User;
 import org.junit.jupiter.api.*;
 import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 import utils.FileIoUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.springframework.web.util.UriComponentsBuilder.fromHttpUrl;
 
 public class HttpRequestTest {
 
@@ -73,7 +75,7 @@ public class HttpRequestTest {
     @Test
     void request_queryString() {
         RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<String> response = restTemplate.getForEntity("http://localhost:8080/user/create?userId=cu&password=password&name=%EC%9D%B4%EB%8F%99%EA%B7%9C&email=brainbackdoor%40gmail.com", String.class);
+        ResponseEntity<String> response = restTemplate.getForEntity(fromHttpUrl("http://localhost:8080/user/create?userId=cu&password=password&name=이동규&email=brainbackdoor@gmail.com").build().toUri(), String.class);
 
         User user = new User("cu", "password", "이동규", "brainbackdoor@gmail.com");
         User cu = DataBase.findUserById("cu");
@@ -92,8 +94,8 @@ public class HttpRequestTest {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
-        HttpEntity<String> request = new HttpEntity<>("userId=cu&password=password&name=%EC%9D%B4%EB%8F%99%EA%B7%9C&email=brainbackdoor%40gmail.com", headers);
-        ResponseEntity<String> response = restTemplate.exchange("http://localhost:8080/user/create", HttpMethod.POST, request, String.class);
+        HttpEntity<String> request = new HttpEntity<>("userId=cu&password=password&name=이동규&email=brainbackdoor@gmail.com", headers);
+        ResponseEntity<String> response = restTemplate.exchange(fromHttpUrl("http://localhost:8080/user/create").build().toUri(), HttpMethod.POST, request, String.class);
 
         User user = new User("cu", "password", "이동규", "brainbackdoor@gmail.com");
         User cu = DataBase.findUserById("cu");
@@ -112,7 +114,7 @@ public class HttpRequestTest {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
-        HttpEntity<String> request = new HttpEntity<>("userId=cu&password=password&name=%EC%9D%B4%EB%8F%99%EA%B7%9C&email=brainbackdoor%40gmail.com", headers);
+        HttpEntity<String> request = new HttpEntity<>("userId=cu&password=password&name=이동규&email=brainbackdoor@gmail.com", headers);
         ResponseEntity<String> response = restTemplate.exchange("http://localhost:8080/user/create", HttpMethod.POST, request, String.class);
 
         User user = new User("cu", "password", "이동규", "brainbackdoor@gmail.com");

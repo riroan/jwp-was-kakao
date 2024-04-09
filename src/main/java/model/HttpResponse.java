@@ -55,7 +55,9 @@ public class HttpResponse {
         writeHeaders(dos);
         dos.writeBytes("\r\n");
 
-        dos.write(body, 0, body.length);
+        if (body != null) {
+            dos.write(body, 0, body.length);
+        }
         dos.flush();
     }
 
