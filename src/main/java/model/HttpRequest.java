@@ -1,13 +1,11 @@
 package model;
 
-import java.util.Map;
-
 public class HttpRequest {
     private final StartLine startLine;
-    private final Map<String, String> headers;
+    private final HttpHeaders headers;
     private final Object body;
 
-    public HttpRequest(StartLine startLine, Map<String,String> headers, Object body) {
+    public HttpRequest(StartLine startLine, HttpHeaders headers, Object body) {
         this.startLine = startLine;
         this.headers = headers;
         this.body = body;
@@ -17,7 +15,7 @@ public class HttpRequest {
         return startLine;
     }
 
-    public Map<String, String> getHeaders() {
+    public HttpHeaders getHeaders() {
         return headers;
     }
 
