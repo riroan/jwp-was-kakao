@@ -29,13 +29,11 @@ public class HttpRequestTest {
     @AfterAll
     static void stopServer() throws InterruptedException {
         server.interrupt();
-        server.join();
     }
 
     @BeforeEach
-    void setUp() throws InterruptedException {
+    void setUp() {
         DataBase.clear();
-        Thread.sleep(5000);
     }
 
     @Test
@@ -62,7 +60,7 @@ public class HttpRequestTest {
     @Test
     void request_css() throws Exception {
         RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<String> response = restTemplate.getForEntity("http://localhost:8080/./css/style.css", String.class);
+        ResponseEntity<String> response = restTemplate.getForEntity("http://localhost:8080/css/styles.css", String.class);
 
         String cssFile = new String(FileIoUtils.loadFileFromClasspath("static/css/styles.css"));
         assertAll(
