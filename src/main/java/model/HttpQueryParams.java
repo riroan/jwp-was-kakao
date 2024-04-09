@@ -6,7 +6,7 @@ public class HttpQueryParams extends HashMap<String, String> {
     public static HttpQueryParams of(String path) {
         String[] paths;
         paths = path.split("\\?");
-        if(paths.length == 1) {
+        if (paths.length == 1) {
             return null;
         }
         HttpQueryParams queryParams = new HttpQueryParams();

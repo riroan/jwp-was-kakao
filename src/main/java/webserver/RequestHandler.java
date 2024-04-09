@@ -4,8 +4,8 @@ import db.DataBase;
 import model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.accept.MappingMediaTypeFileExtensionResolver;
 import utils.FileIoUtils;
 import utils.IOUtils;
 
@@ -13,9 +13,7 @@ import java.io.*;
 import java.net.Socket;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.charset.StandardCharsets;
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
@@ -45,8 +43,22 @@ public class RequestHandler implements Runnable {
             }
 
             if (path.startsWith("/user/create")) {
-                handleUserCreate(httpRequest, dos);
-                return;
+                if (httpRequest.getStartLine().getMethod().equals(HttpMethod.GET)) {
+                    handleUserCreate(httpRequest.getQueryParams(), dos);
+                    return;
+                }
+                if (httpRequest.getStartLine().getMethod().equals(HttpMethod.POST)) {
+                    String body = (String) httpRequest.getBody();
+
+                    HttpQueryParams queryParams = new HttpQueryParams();
+                    for (String line : body.split("&")) {
+                        String[] tokens = line.split("=");
+                        queryParams.put(tokens[0], tokens[1]);
+                    }
+
+                    handleUserCreate(queryParams, dos);
+                    return;
+                }
             }
 
             // 3. etc
@@ -57,17 +69,15 @@ public class RequestHandler implements Runnable {
         }
     }
 
-    private void handleUserCreate(HttpRequest httpRequest, DataOutputStream dos) throws IOException {
-        HttpQueryParams queryParams = httpRequest.getQueryParams();
+    private void handleUserCreate(HttpQueryParams queryParams, DataOutputStream dos) throws IOException {
         String userId = queryParams.get("userId");
         String password = queryParams.get("password");
         String name = queryParams.get("name");
         String email = queryParams.get("email");
         User user = new User(userId, password, name, email);
+
         DataBase.addUser(user);
-
         HttpResponse response = new HttpResponse();
-
         response.respond(dos);
     }
 
@@ -77,7 +87,7 @@ public class RequestHandler implements Runnable {
         return mime != null;
     }
 
-    private void handleFile(HttpRequest httpRequest, DataOutputStream dos) throws IOException{
+    private void handleFile(HttpRequest httpRequest, DataOutputStream dos) throws IOException {
         // 1. template (html)
         if (handleFileResponse("templates", httpRequest, dos)) {
             return;
@@ -111,7 +121,8 @@ public class RequestHandler implements Runnable {
     private String parseBody(BufferedReader br, HttpHeaders headers) throws IOException {
         String key = "Content-Length";
         if (headers.containsKey(key)) {
-            return IOUtils.readData(br, Integer.parseInt(headers.get(key)));
+            String body = IOUtils.readData(br, Integer.parseInt(headers.get(key)));
+            return URLDecoder.decode(body, StandardCharsets.UTF_8);
         }
         return null;
     }

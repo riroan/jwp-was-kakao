@@ -2,8 +2,8 @@ package model;
 
 import org.springframework.http.HttpMethod;
 
-import java.io.BufferedReader;
-import java.io.IOException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 
 public class StartLine {
     private final HttpMethod method;
@@ -19,7 +19,7 @@ public class StartLine {
     public static StartLine of(String text) {
         String[] tokens = text.split(" ");
         String method = tokens[0];
-        String path = tokens[1];
+        String path = URLDecoder.decode(tokens[1], StandardCharsets.UTF_8);
         String httpVersion = tokens[2];
         return new StartLine(HttpMethod.resolve(method), path, httpVersion);
     }
