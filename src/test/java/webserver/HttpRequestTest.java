@@ -78,10 +78,7 @@ public class HttpRequestTest {
         User user = new User("cu", "password", "이동규", "brainbackdoor@gmail.com");
         User cu = DataBase.findUserById("cu");
 
-        assertAll(
-                () -> assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK),
-                () -> assertThat(cu).isEqualTo(user)
-        );
+        assertThat(cu).isEqualTo(user);
     }
 
     @DisplayName("POST form 요청 바디 파싱하여 유저 객체 생성 및 Database에 저장")
@@ -99,10 +96,7 @@ public class HttpRequestTest {
         User user = new User("cu", "password", "이동규", "brainbackdoor@gmail.com");
         User cu = DataBase.findUserById("cu");
 
-        assertAll(
-                () -> assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK),
-                () -> assertThat(cu).isEqualTo(user)
-        );
+        assertThat(cu).isEqualTo(user);
     }
 
     @DisplayName("회원가입 완료 후 `index.html`로 Redirect")

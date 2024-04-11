@@ -78,6 +78,8 @@ public class RequestHandler implements Runnable {
 
         DataBase.addUser(user);
         HttpResponse response = new HttpResponse();
+        response.setStatus(HttpStatus.FOUND);
+        response.getHeaders().put("Location", "/index.html");
         response.respond(dos);
     }
 
