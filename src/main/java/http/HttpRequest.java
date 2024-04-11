@@ -1,4 +1,4 @@
-package model;
+package http;
 
 public class HttpRequest {
     private final StartLine startLine;

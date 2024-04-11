@@ -1,7 +1,6 @@
-package model;
+package http;
 
 import java.util.HashMap;
-import java.util.Map;
 
 public class HttpHeaders extends HashMap<String, String> {
 
