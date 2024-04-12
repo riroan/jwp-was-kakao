@@ -13,6 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 public class HttpRequestTest {
 
     private static Thread server;
+    private RestTemplate restTemplate;
 
     @BeforeAll
     static void runServer() {
@@ -33,12 +34,12 @@ public class HttpRequestTest {
 
     @BeforeEach
     void setUp() {
+        restTemplate = new RestTemplate();
         DataBase.clear();
     }
 
     @Test
     void request_resttemplate() {
-        RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<String> response = restTemplate.getForEntity("http://localhost:8080", String.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
@@ -46,7 +47,6 @@ public class HttpRequestTest {
     @DisplayName("templates의 `/index.html` 파일 응답")
     @Test
     void request_indexhtml() throws Exception {
-        RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<String> response = restTemplate.getForEntity("http://localhost:8080/index.html", String.class);
 
         String indexFile = new String(FileIoUtils.loadFileFromClasspath("templates/index.html"));
@@ -59,7 +59,6 @@ public class HttpRequestTest {
     @DisplayName("static의 `css` 파일 응답")
     @Test
     void request_css() throws Exception {
-        RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<String> response = restTemplate.getForEntity("http://localhost:8080/css/styles.css", String.class);
 
         String cssFile = new String(FileIoUtils.loadFileFromClasspath("static/css/styles.css"));
@@ -72,7 +71,6 @@ public class HttpRequestTest {
     @DisplayName("Query String 파싱하여 유저 객체 생성 및 Database에 저장")
     @Test
     void request_queryString() {
-        RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<String> response = restTemplate.getForEntity("http://localhost:8080/user/create?userId=cu&password=password&name=이동규&email=brainbackdoor@gmail.com", String.class);
 
         User user = new User("cu", "password", "이동규", "brainbackdoor@gmail.com");
@@ -84,7 +82,6 @@ public class HttpRequestTest {
     @DisplayName("POST form 요청 바디 파싱하여 유저 객체 생성 및 Database에 저장")
     @Test
     void request_post() {
-        RestTemplate restTemplate = new RestTemplate();
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
@@ -102,7 +99,6 @@ public class HttpRequestTest {
     @DisplayName("회원가입 완료 후 `index.html`로 Redirect")
     @Test
     void request_redirect() {
-        RestTemplate restTemplate = new RestTemplate();
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
