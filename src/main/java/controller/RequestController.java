@@ -33,11 +33,7 @@ public class RequestController {
             if (httpRequest.isPost()) {
                 String body = (String) httpRequest.getBody();
 
-                HttpQueryParams queryParams = new HttpQueryParams();
-                for (String line : body.split("&")) {
-                    String[] tokens = line.split("=");
-                    queryParams.put(tokens[0], tokens[1]);
-                }
+                HttpQueryParams queryParams = HttpQueryParams.parseParams(body);
 
                 handleUserCreate(queryParams, dos);
                 return;
