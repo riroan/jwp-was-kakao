@@ -4,6 +4,10 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 
 public class RequestLine {
+    private static final String DELIMITER = " ";
+    private static final int METHOD = 0;
+    private static final int PATH = 1;
+    private static final int HTTP_VERSION = 2;
 
     private final HttpMethod method;
     private final String path;
@@ -16,10 +20,10 @@ public class RequestLine {
     }
 
     public static RequestLine of(String text) {
-        String[] tokens = text.split(" ");
-        String method = tokens[0];
-        String path = URLDecoder.decode(tokens[1], StandardCharsets.UTF_8);
-        String httpVersion = tokens[2];
+        String[] tokens = text.split(DELIMITER);
+        String method = tokens[METHOD];
+        String path = URLDecoder.decode(tokens[PATH], StandardCharsets.UTF_8);
+        String httpVersion = tokens[HTTP_VERSION];
         return new RequestLine(HttpMethod.valueOf(method), path, httpVersion);
     }
 
@@ -29,10 +33,6 @@ public class RequestLine {
 
     public boolean isPost() {
         return method.equals(HttpMethod.POST);
-    }
-
-    public HttpMethod getMethod() {
-        return method;
     }
 
     public String getPath() {
