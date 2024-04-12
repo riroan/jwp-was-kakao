@@ -58,9 +58,19 @@ public class RequestController {
         response.respond(dos);
     }
 
+    public static String extractExt(String path) {
+        String[] tokens = path.split("/");
+        String file = tokens[tokens.length - 1];
+        String[] fileNames = file.split("\\.");
+        if (fileNames.length == 1) {
+            return null;
+        }
+        return fileNames[fileNames.length - 1];
+    }
+
     private static boolean isFile(String path) {
         String[] paths = path.split("\\?");
-        String mime = java.net.URLConnection.guessContentTypeFromName(paths[0]);
+        String mime = extractExt(paths[0]);
         return mime != null;
     }
 
@@ -107,10 +117,11 @@ public class RequestController {
     }
 
     private static String parseMIME(String path) {
-        String mimeType = java.net.URLConnection.guessContentTypeFromName(path);
+        String[] paths = path.split("\\?");
+        String mimeType = extractExt(paths[0]);
         if (mimeType == null) {
-            mimeType = "application/octet-stream";
+            return "application/octet-stream";
         }
-        return mimeType;
+        return "text/" + mimeType;
     }
 }
