@@ -7,7 +7,6 @@ import http.HttpResponse;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import utils.FileIoUtils;
 
@@ -26,11 +25,11 @@ public class RequestController {
         }
 
         if (path.startsWith("/user/create")) {
-            if (httpRequest.getStartLine().getMethod().equals(HttpMethod.GET)) {
+            if (httpRequest.isGet()) {
                 handleUserCreate(httpRequest.getQueryParams(), dos);
                 return;
             }
-            if (httpRequest.getStartLine().getMethod().equals(HttpMethod.POST)) {
+            if (httpRequest.isPost()) {
                 String body = (String) httpRequest.getBody();
 
                 HttpQueryParams queryParams = new HttpQueryParams();

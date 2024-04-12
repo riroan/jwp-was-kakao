@@ -21,14 +21,6 @@ public class HttpResponse {
         this.body = body;
     }
 
-    public String getHttpVersion() {
-        return httpVersion;
-    }
-
-    public HttpStatus getStatus() {
-        return status;
-    }
-
     public HttpHeaders getHeaders() {
         return headers;
     }
