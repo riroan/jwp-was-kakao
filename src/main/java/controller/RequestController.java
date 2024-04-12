@@ -1,6 +1,7 @@
 package controller;
 
 import db.DataBase;
+import http.HttpHeaders;
 import http.HttpQueryParams;
 import http.HttpRequest;
 import http.HttpResponse;
@@ -54,9 +55,10 @@ public class RequestController {
         User user = new User(userId, password, name, email);
 
         DataBase.addUser(user);
-        HttpResponse response = new HttpResponse();
-        response.setStatus(HttpStatus.FOUND);
-        response.getHeaders().put("Location", "/index.html");
+        HttpHeaders headers = new HttpHeaders();
+        headers.put("Location", "/index.html");
+
+        HttpResponse response = new HttpResponse(HttpStatus.FOUND, headers, null);
         response.respond(dos);
     }
 
@@ -78,10 +80,10 @@ public class RequestController {
 
     private static void handleRoot(DataOutputStream dos) throws IOException {
         byte[] body = "Hello World".getBytes();
+        HttpHeaders headers = new HttpHeaders();
+        headers.put("Content-Type", "text/html;charset=utf-8");
 
-        HttpResponse response = new HttpResponse();
-        response.getHeaders().put("Content-Type", "text/html;charset=utf-8");
-        response.setBody(body);
+        HttpResponse response = new HttpResponse(HttpStatus.OK, headers, body);
 
         response.respond(dos);
     }
@@ -91,15 +93,11 @@ public class RequestController {
             String path = request.getStartLine().getPath();
             String filePath = parentFolder + path;
 
-            HttpResponse response = new HttpResponse();
-
             byte[] body = FileIoUtils.loadFileFromClasspath(filePath);
-            response.setBody(body);
-            response.setStatus(HttpStatus.OK);
-            response.setHttpVersion(request.getStartLine().getHttpVersion());
-
+            HttpHeaders headers = new HttpHeaders();
             String mime = parseMIME(filePath);
-            response.getHeaders().put("Content-Type", mime + ";charset=utf-8");
+            headers.put("Content-Type", mime + ";charset=utf-8");
+            HttpResponse response = new HttpResponse(HttpStatus.OK, headers, body);
 
             response.respond(dos);
 

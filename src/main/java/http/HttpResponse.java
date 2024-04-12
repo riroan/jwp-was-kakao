@@ -29,19 +29,6 @@ public class HttpResponse {
         return body;
     }
 
-    public void setStatus(HttpStatus status) {
-        this.status = status;
-    }
-
-
-    public void setHttpVersion(String httpVersion) {
-        this.httpVersion = httpVersion;
-    }
-
-    public void setBody(byte[] body) {
-        this.body = body;
-    }
-
     public void respond(DataOutputStream dos) throws IOException {
         dos.writeBytes(String.format("%s %d %s \r\n", httpVersion, status.value(), status.getReasonPhrase()));
         writeHeaders(dos);
