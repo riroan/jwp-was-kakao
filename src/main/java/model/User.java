@@ -1,5 +1,9 @@
 package model;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.util.Objects;
+
 public class User {
     private String userId;
     private String password;
@@ -7,10 +11,10 @@ public class User {
     private String email;
 
     public User(String userId, String password, String name, String email) {
-        this.userId = userId;
-        this.password = password;
-        this.name = name;
-        this.email = email;
+        this.userId = URLDecoder.decode(userId, StandardCharsets.UTF_8);
+        this.password = URLDecoder.decode(password, StandardCharsets.UTF_8);
+        this.name = URLDecoder.decode(name, StandardCharsets.UTF_8);
+        this.email = URLDecoder.decode(email, StandardCharsets.UTF_8);
     }
 
     public String getUserId() {
@@ -32,5 +36,18 @@ public class User {
     @Override
     public String toString() {
         return "User [userId=" + userId + ", password=" + password + ", name=" + name + ", email=" + email + "]";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return Objects.equals(userId, user.userId) && Objects.equals(password, user.password) && Objects.equals(name, user.name) && Objects.equals(email, user.email);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(userId);
     }
 }
