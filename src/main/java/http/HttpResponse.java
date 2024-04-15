@@ -1,5 +1,6 @@
 package http;
 
+import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 
 import java.io.DataOutputStream;
@@ -25,8 +26,10 @@ public class HttpResponse {
         this.body = body;
     }
 
-    public HttpHeaders getHeaders() {
-        return headers;
+    public static HttpResponse redirect(String path) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.put("Location", path);
+        return new HttpResponse(HttpStatus.FOUND, headers);
     }
 
     public byte[] getBody() {

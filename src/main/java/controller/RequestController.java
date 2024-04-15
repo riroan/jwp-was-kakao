@@ -51,10 +51,8 @@ public class RequestController {
         User user = new User(userId, password, name, email);
 
         DataBase.addUser(user);
-        HttpHeaders headers = new HttpHeaders();
-        headers.put("Location", "/index.html");
 
-        HttpResponse response = new HttpResponse(HttpStatus.FOUND, headers);
+        HttpResponse response = HttpResponse.redirect("/index.html");
         response.respond(dos);
     }
 
