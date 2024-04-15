@@ -23,20 +23,16 @@ public class HttpRequest {
         return requestLine.isGet();
     }
 
+    public String getPath() {
+        return requestLine.getPath();
+    }
+
     public boolean isPost() {
         return requestLine.isPost();
     }
 
     public HttpQueryParams getQueryParams() {
         return queryParams;
-    }
-
-    public RequestLine getStartLine() {
-        return requestLine;
-    }
-
-    public HttpHeaders getHeaders() {
-        return headers;
     }
 
     public Object getBody() {

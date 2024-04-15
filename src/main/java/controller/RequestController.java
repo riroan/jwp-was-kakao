@@ -19,7 +19,7 @@ public class RequestController {
     private static final Logger logger = LoggerFactory.getLogger(RequestController.class);
 
     public static void handleRequest(HttpRequest httpRequest, DataOutputStream dos) throws IOException {
-        String path = httpRequest.getStartLine().getPath();
+        String path = httpRequest.getPath();
         if (isFile(path)) {
             handleFile(httpRequest, dos);
             return;
@@ -99,7 +99,7 @@ public class RequestController {
 
     private static boolean handleFileResponse(String parentFolder, HttpRequest request, DataOutputStream dos) throws IOException {
         try {
-            String path = request.getStartLine().getPath();
+            String path = request.getPath();
             String filePath = parentFolder + path;
 
             byte[] body = FileIoUtils.loadFileFromClasspath(filePath);
