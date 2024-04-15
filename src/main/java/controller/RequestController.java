@@ -17,6 +17,7 @@ import java.net.URISyntaxException;
 
 public class RequestController {
     private static final String EXT_DELIMITER = "\\.";
+    private static final String QUERY_DELIMITER = "\\?";
     private static final String PATH_DELIMITER = "/";
     private static final Logger logger = LoggerFactory.getLogger(RequestController.class);
 
@@ -120,7 +121,7 @@ public class RequestController {
     }
 
     private static String parseMIME(String path) {
-        String[] paths = path.split("\\?");
+        String[] paths = path.split(QUERY_DELIMITER);
         String mimeType = extractExt(paths[0]);
         if (mimeType == null) {
             return "application/octet-stream";
