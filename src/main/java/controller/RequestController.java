@@ -1,10 +1,7 @@
 package controller;
 
 import db.DataBase;
-import http.HttpHeaders;
-import http.HttpQueryParams;
-import http.HttpRequest;
-import http.HttpResponse;
+import http.*;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,7 +64,7 @@ public class RequestController {
         return HttpResponse.redirect("/index.html");
     }
 
-    public static String extractExt(String path) {
+    public static ContentType extractExt(String path) {
         String[] tokens = path.split(PATH_DELIMITER);
         if (tokens.length < 1) {
             return null;
@@ -77,12 +74,12 @@ public class RequestController {
         if (fileNames.length <= 1) {
             return null;
         }
-        return fileNames[fileNames.length - 1];
+        return ContentType.of(fileNames[fileNames.length - 1]);
     }
 
     private static boolean isFile(String path) {
         String[] paths = path.split(QUERY_DELIMITER);
-        String mime = extractExt(paths[0]);
+        ContentType mime = extractExt(paths[0]);
         return mime != null;
     }
 
@@ -132,10 +129,10 @@ public class RequestController {
 
     private static String parseMIME(String path) {
         String[] paths = path.split(QUERY_DELIMITER);
-        String mimeType = extractExt(paths[0]);
+        ContentType mimeType = extractExt(paths[0]);
         if (mimeType == null) {
             return "application/octet-stream";
         }
-        return "text/" + mimeType;
+        return mimeType.getContentType();
     }
 }
