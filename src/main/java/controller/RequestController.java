@@ -12,8 +12,12 @@ import org.springframework.http.HttpStatus;
 import utils.FileIoUtils;
 
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class RequestController {
     private static final String EXT_DELIMITER = "\\.";
@@ -23,30 +27,35 @@ public class RequestController {
 
     public static void handleRequest(HttpRequest httpRequest, DataOutputStream dos) throws IOException {
         String path = httpRequest.getPath();
+        HttpResponse httpResponse = null;
         if (isFile(path)) {
-            handleFile(httpRequest, dos);
-            return;
+            httpResponse = handleFile(httpRequest);
         }
 
         if (path.startsWith("/user/create")) {
             if (httpRequest.isGet()) {
-                handleUserCreate(httpRequest.getQueryParams(), dos);
-                return;
+                httpResponse = handleUserCreate(httpRequest.getQueryParams());
             }
             if (httpRequest.isPost()) {
                 String body = (String) httpRequest.getBody();
 
                 HttpQueryParams queryParams = HttpQueryParams.parseParams(body);
 
-                handleUserCreate(queryParams, dos);
-                return;
+                httpResponse = handleUserCreate(queryParams);
             }
         }
 
-        handleRoot(dos);
+        if (path.equals("/")) {
+            httpResponse = handleRoot();
+        }
+
+        if (httpResponse == null) {
+            return;
+        }
+        httpResponse.respond(dos);
     }
 
-    private static void handleUserCreate(HttpQueryParams queryParams, DataOutputStream dos) throws IOException {
+    private static HttpResponse handleUserCreate(HttpQueryParams queryParams) {
         String userId = queryParams.get("userId");
         String password = queryParams.get("password");
         String name = queryParams.get("name");
@@ -55,8 +64,7 @@ public class RequestController {
 
         DataBase.addUser(user);
 
-        HttpResponse response = HttpResponse.redirect("/index.html");
-        response.respond(dos);
+        return HttpResponse.redirect("/index.html");
     }
 
     public static String extractExt(String path) {
@@ -73,32 +81,38 @@ public class RequestController {
     }
 
     private static boolean isFile(String path) {
-        String[] paths = path.split("\\?");
+        String[] paths = path.split(QUERY_DELIMITER);
         String mime = extractExt(paths[0]);
         return mime != null;
     }
 
-    private static void handleFile(HttpRequest httpRequest, DataOutputStream dos) throws IOException {
+    private static boolean existFile(String path) {
+        // ?: 상대경로로 안돼서 절대경로로 수정했습니다.
+        Path absolutePath = Paths.get(path).toAbsolutePath();
+        File file = new File(absolutePath.toString());
+        return file.exists();
+    }
+
+    private static HttpResponse handleFile(HttpRequest httpRequest) throws IOException {
+        String path = httpRequest.getPath();
         // 1. template (html)
-        if (handleFileResponse("templates", httpRequest, dos)) {
-            return;
+        if (existFile("src/main/resources/templates" + path)) {
+            return handleFileResponse("templates", httpRequest);
         }
 
         // 2. static (css...)
-        handleFileResponse("static", httpRequest, dos);
+        return handleFileResponse("static", httpRequest);
     }
 
-    private static void handleRoot(DataOutputStream dos) throws IOException {
+    private static HttpResponse handleRoot() {
         byte[] body = "Hello World".getBytes();
         HttpHeaders headers = new HttpHeaders();
         headers.put("Content-Type", "text/html;charset=utf-8");
 
-        HttpResponse response = new HttpResponse(HttpStatus.OK, headers, body);
-
-        response.respond(dos);
+        return new HttpResponse(HttpStatus.OK, headers, body);
     }
 
-    private static boolean handleFileResponse(String parentFolder, HttpRequest request, DataOutputStream dos) throws IOException {
+    private static HttpResponse handleFileResponse(String parentFolder, HttpRequest request) throws IOException {
         try {
             String path = request.getPath();
             String filePath = parentFolder + path;
@@ -107,17 +121,13 @@ public class RequestController {
             HttpHeaders headers = new HttpHeaders();
             String mime = parseMIME(filePath);
             headers.put("Content-Type", mime + ";charset=utf-8");
-            HttpResponse response = new HttpResponse(HttpStatus.OK, headers, body);
-
-            response.respond(dos);
-
-            return true;
+            return new HttpResponse(HttpStatus.OK, headers, body);
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         } catch (NullPointerException e) {
             logger.info(String.format("file does not exist in '%s'", parentFolder));
-            return false;
         }
+        return null;
     }
 
     private static String parseMIME(String path) {
