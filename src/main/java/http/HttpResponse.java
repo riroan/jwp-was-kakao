@@ -15,6 +15,10 @@ public class HttpResponse {
 
     public HttpResponse() {}
 
+    public HttpResponse(HttpStatus status, HttpHeaders headers) {
+        this(status, headers, null);
+    }
+
     public HttpResponse(HttpStatus status, HttpHeaders headers, byte[] body) {
         this.status = status;
         this.headers = headers;

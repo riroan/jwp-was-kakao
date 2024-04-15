@@ -54,7 +54,7 @@ public class RequestController {
         HttpHeaders headers = new HttpHeaders();
         headers.put("Location", "/index.html");
 
-        HttpResponse response = new HttpResponse(HttpStatus.FOUND, headers, null);
+        HttpResponse response = new HttpResponse(HttpStatus.FOUND, headers);
         response.respond(dos);
     }
 
