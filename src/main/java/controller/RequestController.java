@@ -16,6 +16,8 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 
 public class RequestController {
+    private static final String EXT_DELIMITER = "\\.";
+    private static final String PATH_DELIMITER = "/";
     private static final Logger logger = LoggerFactory.getLogger(RequestController.class);
 
     public static void handleRequest(HttpRequest httpRequest, DataOutputStream dos) throws IOException {
@@ -57,12 +59,12 @@ public class RequestController {
     }
 
     public static String extractExt(String path) {
-        String[] tokens = path.split("/");
+        String[] tokens = path.split(PATH_DELIMITER);
         if (tokens.length < 1) {
             return null;
         }
         String file = tokens[tokens.length - 1];
-        String[] fileNames = file.split("\\.");
+        String[] fileNames = file.split(EXT_DELIMITER);
         if (fileNames.length <= 1) {
             return null;
         }
