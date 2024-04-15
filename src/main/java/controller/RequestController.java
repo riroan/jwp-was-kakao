@@ -60,9 +60,12 @@ public class RequestController {
 
     public static String extractExt(String path) {
         String[] tokens = path.split("/");
+        if (tokens.length < 1) {
+            return null;
+        }
         String file = tokens[tokens.length - 1];
         String[] fileNames = file.split("\\.");
-        if (fileNames.length == 1) {
+        if (fileNames.length <= 1) {
             return null;
         }
         return fileNames[fileNames.length - 1];
