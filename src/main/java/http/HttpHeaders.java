@@ -27,4 +27,8 @@ public class HttpHeaders {
                 .collect(Collectors.toMap(tokens -> tokens[KEY_INDEX], tokens -> tokens[VALUE_INDEX]));
         return new HttpHeaders(headers);
     }
+
+    public void put(String key, String value) {
+        headers.put(key, value);
+    }
 }
