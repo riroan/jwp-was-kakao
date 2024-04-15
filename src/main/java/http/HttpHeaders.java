@@ -3,6 +3,7 @@ package http;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class HttpHeaders {
@@ -30,5 +31,17 @@ public class HttpHeaders {
 
     public void put(String key, String value) {
         headers.put(key, value);
+    }
+
+    public boolean containsKey(String key) {
+        return headers.containsKey(key);
+    }
+
+    public String get(String key) {
+        return headers.get(key);
+    }
+
+    public Set<Map.Entry<String, String>> entrySet() {
+        return headers.entrySet();
     }
 }
