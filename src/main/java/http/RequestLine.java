@@ -22,7 +22,7 @@ public class RequestLine {
     public static RequestLine of(String text) {
         String[] tokens = text.split(DELIMITER);
         String method = tokens[METHOD];
-        String path = URLDecoder.decode(tokens[PATH], StandardCharsets.UTF_8);
+        String path = tokens[PATH];
         String httpVersion = tokens[HTTP_VERSION];
         return new RequestLine(HttpMethod.valueOf(method), path, httpVersion);
     }
@@ -37,9 +37,5 @@ public class RequestLine {
 
     public String getPath() {
         return path;
-    }
-
-    public String getHttpVersion() {
-        return httpVersion;
     }
 }
