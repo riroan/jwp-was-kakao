@@ -1,11 +1,9 @@
 package http;
 
-import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.Map;
 
 public class HttpResponse {
 
@@ -14,7 +12,8 @@ public class HttpResponse {
     private HttpHeaders headers = new HttpHeaders();
     private byte[] body = null;
 
-    public HttpResponse() {}
+    public HttpResponse() {
+    }
 
     public HttpResponse(HttpStatus status, HttpHeaders headers) {
         this(status, headers, null);
@@ -51,8 +50,8 @@ public class HttpResponse {
         if (body != null && body.length > 0) {
             dos.writeBytes("Content-Length: " + body.length + "\r\n");
         }
-        for (Map.Entry<String, String> entry : headers.entrySet()) {
-            dos.writeBytes(entry.getKey() + ": " + entry.getValue() + "\r\n");
+        for (String headerLine : headers.getHeaderLine()) {
+            dos.writeBytes(headerLine);
         }
     }
 }

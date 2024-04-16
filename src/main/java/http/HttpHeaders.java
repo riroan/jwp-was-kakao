@@ -1,9 +1,6 @@
 package http;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class HttpHeaders {
@@ -18,7 +15,7 @@ public class HttpHeaders {
         this(new HashMap<>());
     }
 
-    public HttpHeaders (Map<String, String> headers) {
+    public HttpHeaders(Map<String, String> headers) {
         this.headers = headers;
     }
 
@@ -43,5 +40,12 @@ public class HttpHeaders {
 
     public Set<Map.Entry<String, String>> entrySet() {
         return headers.entrySet();
+    }
+
+    public List<String> getHeaderLine() {
+        return headers.entrySet()
+                .stream()
+                .map(entry -> String.format("%s: %s\r\n", entry.getKey(), entry.getValue()))
+                .collect(Collectors.toList());
     }
 }
