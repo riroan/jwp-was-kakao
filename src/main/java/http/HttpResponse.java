@@ -1,7 +1,5 @@
 package http;
 
-import org.springframework.http.HttpStatus;
-
 import java.io.DataOutputStream;
 import java.io.IOException;
 
@@ -25,10 +23,9 @@ public class HttpResponse {
         this.body = body;
     }
 
-    public static HttpResponse redirect(String path) {
-        HttpHeaders headers = new HttpHeaders();
+    public void redirect(String path) {
+        status = HttpStatus.FOUND;
         headers.put("Location", path);
-        return new HttpResponse(HttpStatus.FOUND, headers);
     }
 
     public byte[] getBody() {
@@ -36,7 +33,7 @@ public class HttpResponse {
     }
 
     public void respond(DataOutputStream dos) throws IOException {
-        dos.writeBytes(String.format("%s %d %s \r\n", httpVersion, status.value(), status.getReasonPhrase()));
+        dos.writeBytes(String.format("%s %d %s \r\n", httpVersion, status.getStatusCode(), status.getStatus()));
         writeHeaders(dos);
         dos.writeBytes("\r\n");
 
@@ -53,5 +50,17 @@ public class HttpResponse {
         for (String headerLine : headers.getHeaderLine()) {
             dos.writeBytes(headerLine);
         }
+    }
+
+    public void setStatus(HttpStatus httpStatus) {
+        this.status = httpStatus;
+    }
+
+    public void setContentType(ContentType contentType) {
+        headers.put("Content-Type", contentType.getContentType());
+    }
+
+    public void setBody(byte[] body) {
+        this.body = body;
     }
 }

@@ -8,15 +8,15 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class HttpQueryParams {
-    private static final String QUERY_STRING_DELIMITER = "&";
-    private static final String KEY_VALUE_DELIMITER = "=";
+    protected static final String QUERY_STRING_DELIMITER = "&";
+    protected static final String KEY_VALUE_DELIMITER = "=";
     private static final String QUERY_DELIMITER = "\\?";
     private static final int KEY_INDEX = 0;
     private static final int VALUE_INDEX = 1;
     private static final int QUERY_PART = 1;
     private static final int MINIMUM_LENGTH = 1;
 
-    private final Map<String, String> queryParam;
+    protected final Map<String, String> queryParam;
 
     public HttpQueryParams() {
         this(new HashMap<>());

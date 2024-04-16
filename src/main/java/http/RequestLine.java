@@ -1,8 +1,5 @@
 package http;
 
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
-
 public class RequestLine {
     private static final String DELIMITER = " ";
     private static final int METHOD = 0;
@@ -11,11 +8,13 @@ public class RequestLine {
 
     private final HttpMethod method;
     private final String path;
+    private final String rawPath;
     private final String httpVersion;
 
     public RequestLine(HttpMethod method, String path, String httpVersion) {
         this.method = method;
         this.path = path;
+        this.rawPath = path.split("\\?")[0];
         this.httpVersion = httpVersion;
     }
 
@@ -37,5 +36,9 @@ public class RequestLine {
 
     public String getPath() {
         return path;
+    }
+
+    public String getRawPath() {
+        return rawPath;
     }
 }

@@ -72,6 +72,7 @@ public class HttpRequestTest {
     @Test
     void request_queryString() {
         ResponseEntity<String> response = restTemplate.getForEntity("http://localhost:8080/user/create?userId=cu&password=password&name=이동규&email=brainbackdoor@gmail.com", String.class);
+        System.out.println(response.getStatusCode());
 
         User user = new User("cu", "password", "이동규", "brainbackdoor@gmail.com");
         User cu = DataBase.findUserById("cu");

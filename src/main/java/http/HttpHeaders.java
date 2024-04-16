@@ -42,8 +42,12 @@ public class HttpHeaders {
         return headers.get(key);
     }
 
-    public Set<Map.Entry<String, String>> entrySet() {
-        return headers.entrySet();
+    public HttpCookie getCookie() {
+        String cookieString = headers.getOrDefault("cookie", "");
+        if (cookieString.isEmpty()) {
+            return new HttpCookie();
+        }
+        return (HttpCookie) HttpCookie.parseParams(cookieString);
     }
 
     public List<String> getHeaderLine() {
