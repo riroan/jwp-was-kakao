@@ -14,6 +14,7 @@ public class HttpQueryParams {
     private static final int KEY_INDEX = 0;
     private static final int VALUE_INDEX = 1;
     private static final int QUERY_PART = 1;
+    private static final int MINIMUM_LENGTH = 1;
 
     private final Map<String, String> queryParam;
 
@@ -27,7 +28,7 @@ public class HttpQueryParams {
 
     public static HttpQueryParams of(String path) {
         String[] paths = path.split(QUERY_DELIMITER);
-        if (paths.length == 1) {
+        if (paths.length == MINIMUM_LENGTH) {
             return null;
         }
         return parseParams(paths[QUERY_PART]);
