@@ -9,12 +9,8 @@ import org.springframework.http.HttpStatus;
 import utils.FileIoUtils;
 
 import java.io.DataOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 public class RequestController {
     private static final String EXT_DELIMITER = "\\.";
@@ -43,6 +39,12 @@ public class RequestController {
             }
         }
 
+        if (path.equals("/user/login")) {
+            String body = (String) httpRequest.getBody();
+            HttpQueryParams queryParams = HttpQueryParams.parseParams(body);
+            httpResponse = handleLogin(queryParams);
+        }
+
         if (path.equals("/")) {
             httpResponse = handleRoot();
         }
@@ -51,6 +53,18 @@ public class RequestController {
             return;
         }
         httpResponse.respond(dos);
+    }
+
+    private static HttpResponse handleLogin(HttpQueryParams queryParams) {
+        String userId = queryParams.get("userId");
+        String password = queryParams.get("password");
+
+        User existUser = DataBase.findUserById(userId);
+        if (existUser == null || !existUser.match(userId, password)) {
+            return HttpResponse.redirect("/user/login_failed.html");
+        }
+
+        return HttpResponse.redirect("/index.html");
     }
 
     private static HttpResponse handleUserCreate(HttpQueryParams queryParams) {
@@ -82,19 +96,6 @@ public class RequestController {
         String[] paths = path.split(QUERY_DELIMITER);
         ContentType mime = extractExt(paths[0]);
         return mime != null;
-    }
-
-    private static boolean existFile(String pathString) {
-        // ?: 상대경로로 안돼서 절대경로로 수정했습니다.
-        Path path = null;
-        try {
-            path = Paths.get(FileIoUtils.class.getClassLoader().getResource(pathString).toURI());
-        } catch (URISyntaxException e) {
-            logger.info("file not found");
-            return false;
-        }
-        File file = new File(path.toString());
-        return file.exists();
     }
 
     private static HttpResponse handleFile(HttpRequest httpRequest) throws IOException {

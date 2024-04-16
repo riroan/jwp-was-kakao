@@ -1,7 +1,5 @@
 package model;
 
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 public class User {
@@ -31,6 +29,10 @@ public class User {
 
     public String getEmail() {
         return email;
+    }
+
+    public boolean match(String userId, String password) {
+        return this.userId.equals(userId) && this.password.equals(password);
     }
 
     @Override
