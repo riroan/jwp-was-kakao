@@ -1,4 +1,5 @@
 package http;
+
 public enum ContentType {
     HTML("html", "text/html;charset=utf-8"),
     CSS("css", "text/css;charset=utf-8"),
@@ -19,6 +20,10 @@ public enum ContentType {
 
     public static ContentType of(String extension) {
         return valueOf(extension.toUpperCase());
+    }
+
+    public boolean isTemplate() {
+        return this == ContentType.ICO || this == ContentType.HTML;
     }
 
     public String getContentType() {

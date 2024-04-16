@@ -20,6 +20,7 @@ public class RequestController {
     private static final String EXT_DELIMITER = "\\.";
     private static final String QUERY_DELIMITER = "\\?";
     private static final String PATH_DELIMITER = "/";
+    private static final int MINIMUM_LENGTH = 1;
     private static final Logger logger = LoggerFactory.getLogger(RequestController.class);
 
     public static void handleRequest(HttpRequest httpRequest, DataOutputStream dos) throws IOException {
@@ -66,12 +67,12 @@ public class RequestController {
 
     public static ContentType extractExt(String path) {
         String[] tokens = path.split(PATH_DELIMITER);
-        if (tokens.length < 1) {
+        if (tokens.length < MINIMUM_LENGTH) {
             return null;
         }
         String file = tokens[tokens.length - 1];
         String[] fileNames = file.split(EXT_DELIMITER);
-        if (fileNames.length <= 1) {
+        if (fileNames.length <= MINIMUM_LENGTH) {
             return null;
         }
         return ContentType.of(fileNames[fileNames.length - 1]);
@@ -83,17 +84,24 @@ public class RequestController {
         return mime != null;
     }
 
-    private static boolean existFile(String path) {
+    private static boolean existFile(String pathString) {
         // ?: 상대경로로 안돼서 절대경로로 수정했습니다.
-        Path absolutePath = Paths.get(path).toAbsolutePath();
-        File file = new File(absolutePath.toString());
+        Path path = null;
+        try {
+            path = Paths.get(FileIoUtils.class.getClassLoader().getResource(pathString).toURI());
+        } catch (URISyntaxException e) {
+            logger.info("file not found");
+            return false;
+        }
+        File file = new File(path.toString());
         return file.exists();
     }
 
     private static HttpResponse handleFile(HttpRequest httpRequest) throws IOException {
         String path = httpRequest.getPath();
+        ContentType contentType = parseMIME(path);
         // 1. template (html)
-        if (existFile("src/main/resources/templates" + path)) {
+        if (contentType.isTemplate()) {
             return handleFileResponse("templates", httpRequest);
         }
 
