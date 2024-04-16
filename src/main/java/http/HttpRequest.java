@@ -6,21 +6,6 @@ public class HttpRequest {
     private final HttpHeaders headers;
     private final HttpQueryParams queryParams;
     private final Object body;
-    private final HttpCookie cookie;
-
-    public HttpRequest(
-            RequestLine requestLine,
-            HttpHeaders headers,
-            HttpQueryParams queryParams,
-            Object body,
-            HttpCookie cookie
-    ) {
-        this.requestLine = requestLine;
-        this.headers = headers;
-        this.queryParams = queryParams;
-        this.body = body;
-        this.cookie = cookie;
-    }
 
     public HttpRequest(
             RequestLine requestLine,
@@ -28,7 +13,10 @@ public class HttpRequest {
             HttpQueryParams queryParams,
             Object body
     ) {
-        this(requestLine, headers, queryParams, body, headers.getCookie());
+        this.requestLine = requestLine;
+        this.headers = headers;
+        this.queryParams = queryParams;
+        this.body = body;
     }
 
     public boolean isGet() {
@@ -41,6 +29,10 @@ public class HttpRequest {
 
     public String getRawPath() {
         return requestLine.getRawPath();
+    }
+
+    public HttpCookie getCookie() {
+        return headers.getCookie();
     }
 
     public boolean isPost() {

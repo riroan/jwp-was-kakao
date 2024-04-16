@@ -1,9 +1,6 @@
 package webserver;
 
-import controller.Controller;
-import controller.FileController;
-import controller.RootController;
-import controller.UserCreateController;
+import controller.*;
 import http.HttpRequest;
 import http.HttpResponse;
 import org.slf4j.Logger;
@@ -29,6 +26,7 @@ public class RequestHandler implements Runnable {
     private void init() {
         controllers.put("/", new RootController());
         controllers.put("/user/create", new UserCreateController());
+        controllers.put("/user/login", new LoginController());
     }
 
     public void run() {

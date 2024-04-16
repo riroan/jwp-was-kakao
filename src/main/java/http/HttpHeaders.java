@@ -1,6 +1,9 @@
 package http;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class HttpHeaders {
@@ -10,6 +13,7 @@ public class HttpHeaders {
     private static final int VALUE_INDEX = 1;
 
     private final Map<String, String> headers;
+    private final HttpCookie cookie;
 
     public HttpHeaders() {
         this(new HashMap<>());
@@ -17,6 +21,12 @@ public class HttpHeaders {
 
     public HttpHeaders(Map<String, String> headers) {
         this.headers = headers;
+        String cookieString = headers.getOrDefault("cookie", "");
+        if (cookieString.isEmpty()) {
+            this.cookie = new HttpCookie();
+        } else {
+            this.cookie = (HttpCookie) HttpCookie.parseParams(cookieString);
+        }
     }
 
     public static HttpHeaders of(String text) {
@@ -30,8 +40,12 @@ public class HttpHeaders {
         headers.put(key, value);
     }
 
-    public void put(ContentType contentType) {
-        headers.put("Content-Type", contentType.getContentType() + ";charset=utf-8");
+    public void addCookie(String key, String value) {
+        cookie.put(key, value);
+    }
+
+    public HttpCookie cookie() {
+        return cookie;
     }
 
     public boolean containsKey(String key) {
@@ -43,7 +57,7 @@ public class HttpHeaders {
     }
 
     public HttpCookie getCookie() {
-        String cookieString = headers.getOrDefault("cookie", "");
+        String cookieString = headers.getOrDefault("Cookie", "");
         if (cookieString.isEmpty()) {
             return new HttpCookie();
         }
@@ -51,9 +65,14 @@ public class HttpHeaders {
     }
 
     public List<String> getHeaderLine() {
-        return headers.entrySet()
+        List<String> headerLine = headers.entrySet()
                 .stream()
                 .map(entry -> String.format("%s: %s\r\n", entry.getKey(), entry.getValue()))
                 .collect(Collectors.toList());
+
+        if (!cookie.isEmpty()) {
+            headerLine.add(String.format("%s: %s\r\n", "Cookie", cookie.getCookieString()));
+        }
+        return headerLine;
     }
 }

@@ -12,4 +12,12 @@ public class HttpCookie extends HttpQueryParams {
                 .collect(Collectors.toList())
                 .toArray(String[]::new));
     }
+
+    public boolean isEmpty() {
+        return queryParam.isEmpty();
+    }
+
+    public void put(String key, String value) {
+        queryParam.put(key, value);
+    }
 }
