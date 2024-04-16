@@ -6,7 +6,8 @@ public enum ContentType {
     ICO("ico", "image/icon"),
     PNG("png", "image/jpeg"),
     TTF("ttf", "application/font-ttf"),
-    WOFF("woff", "application/font-woff");
+    WOFF("woff", "application/font-woff"),
+    OCTET("octet", "application/octet-stream");
 
     private String extension;
     private String contentType;

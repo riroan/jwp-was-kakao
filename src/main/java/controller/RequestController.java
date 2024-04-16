@@ -104,7 +104,7 @@ public class RequestController {
     private static HttpResponse handleRoot() {
         byte[] body = "Hello World".getBytes();
         HttpHeaders headers = new HttpHeaders();
-        headers.put("Content-Type", "text/html;charset=utf-8");
+        headers.put(ContentType.of("html"));
 
         return new HttpResponse(HttpStatus.OK, headers, body);
     }
@@ -116,8 +116,8 @@ public class RequestController {
 
             byte[] body = FileIoUtils.loadFileFromClasspath(filePath);
             HttpHeaders headers = new HttpHeaders();
-            String mime = parseMIME(filePath);
-            headers.put("Content-Type", mime + ";charset=utf-8");
+            ContentType mime = parseMIME(filePath);
+            headers.put(mime);
             return new HttpResponse(HttpStatus.OK, headers, body);
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
@@ -127,12 +127,12 @@ public class RequestController {
         return null;
     }
 
-    private static String parseMIME(String path) {
+    private static ContentType parseMIME(String path) {
         String[] paths = path.split(QUERY_DELIMITER);
         ContentType mimeType = extractExt(paths[0]);
         if (mimeType == null) {
-            return "application/octet-stream";
+            return ContentType.of("OCTET");
         }
-        return mimeType.getContentType();
+        return mimeType;
     }
 }

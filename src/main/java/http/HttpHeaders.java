@@ -30,6 +30,10 @@ public class HttpHeaders {
         headers.put(key, value);
     }
 
+    public void put(ContentType contentType) {
+        headers.put("Content-Type", contentType.getContentType() + ";charset=utf-8");
+    }
+
     public boolean containsKey(String key) {
         return headers.containsKey(key);
     }
