@@ -21,11 +21,13 @@ public class HttpHeaders {
 
     public HttpHeaders(Map<String, String> headers) {
         this.headers = headers;
-        String cookieString = headers.getOrDefault("cookie", "");
+        String cookieString = headers.getOrDefault("Cookie", "");
+        System.out.println(cookieString);
+
         if (cookieString.isEmpty()) {
             this.cookie = new HttpCookie();
         } else {
-            this.cookie = (HttpCookie) HttpCookie.parseParams(cookieString);
+            this.cookie = HttpCookie.parseParams(cookieString);
         }
     }
 
@@ -40,14 +42,6 @@ public class HttpHeaders {
         headers.put(key, value);
     }
 
-    public void addCookie(String key, String value) {
-        cookie.put(key, value);
-    }
-
-    public HttpCookie cookie() {
-        return cookie;
-    }
-
     public boolean containsKey(String key) {
         return headers.containsKey(key);
     }
@@ -56,23 +50,14 @@ public class HttpHeaders {
         return headers.get(key);
     }
 
-    public HttpCookie getCookie() {
-        String cookieString = headers.getOrDefault("Cookie", "");
-        if (cookieString.isEmpty()) {
-            return new HttpCookie();
-        }
-        return (HttpCookie) HttpCookie.parseParams(cookieString);
-    }
-
     public List<String> getHeaderLine() {
-        List<String> headerLine = headers.entrySet()
+        return headers.entrySet()
                 .stream()
                 .map(entry -> String.format("%s: %s\r\n", entry.getKey(), entry.getValue()))
                 .collect(Collectors.toList());
+    }
 
-        if (!cookie.isEmpty()) {
-            headerLine.add(String.format("%s: %s\r\n", "Cookie", cookie.getCookieString()));
-        }
-        return headerLine;
+    public boolean isLogin() {
+        return cookie.get("logined") != null;
     }
 }

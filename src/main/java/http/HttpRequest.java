@@ -31,10 +31,6 @@ public class HttpRequest {
         return requestLine.getRawPath();
     }
 
-    public HttpCookie getCookie() {
-        return headers.getCookie();
-    }
-
     public boolean isPost() {
         return requestLine.isPost();
     }
@@ -45,5 +41,9 @@ public class HttpRequest {
 
     public Object getBody() {
         return body;
+    }
+
+    public boolean isLogin() {
+        return headers.isLogin();
     }
 }

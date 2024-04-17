@@ -27,6 +27,7 @@ public class RequestHandler implements Runnable {
         controllers.put("/", new RootController());
         controllers.put("/user/create", new UserCreateController());
         controllers.put("/user/login", new LoginController());
+        controllers.put("/user/list", new UserListController());
     }
 
     public void run() {
