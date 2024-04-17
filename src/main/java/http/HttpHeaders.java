@@ -50,6 +50,10 @@ public class HttpHeaders {
         return headers.get(key);
     }
 
+    public String getSessionId() {
+        return cookie.get("JSESSIONID");
+    }
+
     public List<String> getHeaderLine() {
         return headers.entrySet()
                 .stream()

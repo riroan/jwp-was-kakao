@@ -43,6 +43,10 @@ public class HttpRequest {
         return body;
     }
 
+    public String getSessionId() {
+        return headers.getSessionId();
+    }
+
     public boolean isLogin() {
         return headers.isLogin();
     }

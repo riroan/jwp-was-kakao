@@ -23,7 +23,7 @@ public class RequestHandler implements Runnable {
         this.connection = connectionSocket;
     }
 
-    private void init() {
+    static {
         controllers.put("/", new RootController());
         controllers.put("/user/create", new UserCreateController());
         controllers.put("/user/login", new LoginController());
@@ -33,8 +33,6 @@ public class RequestHandler implements Runnable {
     public void run() {
         logger.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(),
                 connection.getPort());
-
-        init();
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             BufferedReader br = new BufferedReader(new InputStreamReader(in));
