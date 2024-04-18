@@ -1,18 +1,21 @@
 package controller;
 
-import com.github.jknack.handlebars.Handlebars;
-import com.github.jknack.handlebars.Template;
-import com.github.jknack.handlebars.io.ClassPathTemplateLoader;
-import com.github.jknack.handlebars.io.TemplateLoader;
 import db.DataBase;
 import http.HttpRequest;
 import http.HttpResponse;
+import template.DynamicRenderer;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 public class UserListController extends Controller {
+    private static final DynamicRenderer renderer;
+
+    static {
+        renderer = new DynamicRenderer("/templates", ".html");
+        renderer.init();
+    }
+
     protected void doGet(HttpRequest request, HttpResponse response) {
         if (request.isLogin()) {
             handle(response);
@@ -23,17 +26,9 @@ public class UserListController extends Controller {
     }
 
     private void handle(HttpResponse response) {
-        try {
-            TemplateLoader loader = new ClassPathTemplateLoader();
-            loader.setPrefix("/templates");
-            loader.setSuffix(".html");
-            Handlebars handlebars = new Handlebars(loader);
-            Template template = handlebars.compile("/user/list");
-            Map<String, Object> users = new HashMap<>();
-            users.put("users", DataBase.findAll());
-            String profilePage = template.apply(users);
-            response.setBody(profilePage.getBytes());
-        } catch (IOException e) {
-        }
+        Map<String, Object> users = new HashMap<>();
+        users.put("users", DataBase.findAll());
+        String profilePage = renderer.apply(users);
+        response.setBody(profilePage.getBytes());
     }
 }
