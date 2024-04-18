@@ -11,6 +11,7 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 
 public class HttpRequestParserUtils {
+    private static final String CONTENT_LENGTH = "Content-Length";
 
     public static HttpRequest parse(BufferedReader br) throws IOException {
         RequestLine RequestLine = http.RequestLine.of(br.readLine());
@@ -35,9 +36,8 @@ public class HttpRequestParserUtils {
 
     private static String parseBody(BufferedReader br, HttpHeaders headers)
             throws IOException {
-        String key = "Content-Length";
-        if (headers.containsKey(key)) {
-            String body = IOUtils.readData(br, Integer.parseInt(headers.get(key)));
+        if (headers.containsKey(CONTENT_LENGTH)) {
+            String body = IOUtils.readData(br, Integer.parseInt(headers.get(CONTENT_LENGTH)));
             return URLDecoder.decode(body, StandardCharsets.UTF_8);
         }
         return null;
