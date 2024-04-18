@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class HttpCookie extends HttpQueryParams {
-    protected static final String QUERY_STRING_DELIMITER = "; ";
+    private static final String QUERY_STRING_DELIMITER = "; ";
 
     public HttpCookie() {
         this(new HashMap<>());
