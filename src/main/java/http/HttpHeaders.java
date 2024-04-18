@@ -22,7 +22,6 @@ public class HttpHeaders {
     public HttpHeaders(Map<String, String> headers) {
         this.headers = headers;
         String cookieString = headers.getOrDefault("Cookie", "");
-        System.out.println(cookieString);
 
         if (cookieString.isEmpty()) {
             this.cookie = new HttpCookie();

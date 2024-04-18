@@ -14,7 +14,6 @@ import java.util.Map;
 
 public class UserListController extends Controller {
     protected void doGet(HttpRequest request, HttpResponse response) {
-        System.out.println(request.isLogin());
         if (request.isLogin()) {
             handle(response);
             return;
@@ -35,7 +34,6 @@ public class UserListController extends Controller {
             String profilePage = template.apply(users);
             response.setBody(profilePage.getBytes());
         } catch (IOException e) {
-            System.out.println("Error");
         }
     }
 }

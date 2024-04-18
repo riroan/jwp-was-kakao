@@ -19,7 +19,6 @@ public class LoginController extends Controller {
         String sessionId = request.getSessionId();
 
         Session session = SessionManager.findSession(sessionId);
-        System.out.println(session == null);
 
         if (session != null) {
             response.redirect(INDEX_PAGE);
